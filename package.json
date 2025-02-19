@@ -1,0 +1,30 @@
+{
+  "name": "masohi",
+  "version": "1.0.0",
+  "description": "Messaging for Bajo Framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ardhi/masohi.git"
+  },
+  "keywords": [
+    "messaging",
+    "pubsub",
+    "event",
+    "bajo",
+    "framework"
+  ],
+  "author": "Ardhi Lukianto <ardhi@lukianto.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ardhi/masohi/issues"
+  },
+  "homepage": "https://github.com/ardhi/masohi#readme",
+  "dependencies": {
+    "eventemitter2": "^6.4.9"
+  }
+}
