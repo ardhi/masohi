@@ -1,16 +1,16 @@
-import EventEmitter2 from 'eventemitter2'
-import collectEvents from '../lib/collect-events.js'
-import handler from '../lib/collect-broadcast-pools.js'
+import PushPull from '../lib/factory/push-pull.js'
 
 async function start () {
-  const { pick } = this.app.bajo.lib._
-  const { buildCollections } = this.app.bajo
-  this.broadcastPools = await buildCollections({ ns: this.name, handler, container: 'broadcastPools', dupChecks: ['name'] })
-  const opts = pick(this.getConfig(), ['maxListeners', 'verboseMemoryLeak', 'ignoreErrors'])
-  opts.wildcard = true
-  opts.delimiter = '.'
-  this.instance = new EventEmitter2(opts)
-  await collectEvents.call(this)
+  const { merge } = this.app.bajo.lib._
+  for (const conn of this.connections) {
+    if (conn.type === 'pushPull') {
+      conn.instance = new PushPull(this, conn)
+    }
+  }
+  if (!this.config.jobQueue) return
+  const conn = { name: 'jobQueue', type: 'pushPull', options: this.config.jobQueue.connection }
+  this.jobQueue = merge({}, conn, { instance: new PushPull(this, conn) })
+  this.jobQueue.pusher = this.jobQueue.instance.createPusher()
 }
 
 export default start

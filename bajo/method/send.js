@@ -1,15 +1,12 @@
-async function send ({ to, from, subject, message, conn = 'masohiMail', options = {} }) {
-  const { getPlugin, importModule } = this.app.bajo
-  // conn format: connName@masohiMail
-  let [connName, pluginName] = conn.split('@')
-  if (!pluginName) {
-    pluginName = connName
-    connName = 'default'
+import sendHandler from '../../lib/send-handler.js'
+
+async function send (payload, noQueue) {
+  if (noQueue) {
+    await sendHandler.call(this, payload)
+    return
   }
-  const plugin = getPlugin(pluginName)
-  const handler = await importModule(`${plugin.dir.pkg}/lib/send.js`)
-  const resp = await handler.call(plugin, { to, from, subject, message, conn: connName, options })
-  return resp
+  const pushed = await this.pushQueue('masohi:send', payload)
+  if (!pushed) await sendHandler.call(this, payload)
 }
 
 export default send
