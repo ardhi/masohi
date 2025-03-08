@@ -3,11 +3,5 @@
   "pushPull": "Push/Pull",
   "pubSub": "Pub/Sub",
   "reqReply": "Req/Reply",
-  "invalidHeader%s": "Invalid header '%s'",
-  "defConnExists": "Default connection already exists",
-  "pusherCreated%s%s%d": "Pusher on '%s@%s:%d' created",
-  "pullerCreated%s%s%d": "Puller on '%s@%s:%d' created",
-  "queueError%s": "Queue error: %s",
-  "invalidWorkerHandler": "Invalid worker handler",
-  "jobQueueError%s": "Job queue error: %s"
+  "defConnExists": "Default connection already exists"
 }

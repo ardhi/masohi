@@ -1,6 +1,6 @@
 {
   "name": "masohi",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Messaging for Bajo Framework",
   "main": "index.js",
   "scripts": {
@@ -23,8 +23,5 @@
   "bugs": {
     "url": "https://github.com/ardhi/masohi/issues"
   },
-  "homepage": "https://github.com/ardhi/masohi#readme",
-  "dependencies": {
-    "zeromq": "^6.3.0"
-  }
+  "homepage": "https://github.com/ardhi/masohi#readme"
 }
