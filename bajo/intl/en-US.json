@@ -3,5 +3,10 @@
   "pushPull": "Push/Pull",
   "pubSub": "Pub/Sub",
   "reqReply": "Req/Reply",
-  "defConnExists": "Default connection already exists"
+  "defConnExists": "Default connection already exists",
+  "connMustHave%s": "A connection must have '%s'",
+  "subsMustHave%s": "A subscription must have '%s'",
+  "publisherStarted%s%s%d": "Publisher on '%s@%s:%d' started",
+  "subscriberStarted%s%s%d": "Subscriber on '%s@%s:%d' started",
+  "cantSubscribeTo%s%s%s": "Can't subscribe '%s' on '%s'. Reason: %s"
 }

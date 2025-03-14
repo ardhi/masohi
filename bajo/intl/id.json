@@ -3,5 +3,10 @@
   "pushPull": "Push/Pull",
   "pubSub": "Pub/Sub",
   "reqReply": "Req/Reply",
-  "defConnExists": "Koneksi default sudah ada"
+  "defConnExists": "Koneksi default sudah ada",
+  "connMustHave%s": "Sebuah koneksi harus memiliki '%s'",
+  "subsMustHave%s": "Sebuah langganan harus memiliki '%s'",
+  "publisherStarted%s%s%d": "Publisher dari '%s@%s:%d' sukses dijalankan",
+  "subscriberStarted%s%s%d": "Subscriber dari '%s@%s:%d' sukses dijalankan",
+  "cantSubscribeTo%s%s%s": "Tidak bisa berlangganan '%s' pada '%s'. Alasan: %s"
 }
