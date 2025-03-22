@@ -8,5 +8,9 @@
   "subsMustHave%s": "A subscription must have '%s'",
   "publisherStarted%s%s%d": "Publisher on '%s@%s:%d' started",
   "subscriberStarted%s%s%d": "Subscriber on '%s@%s:%d' started",
-  "cantSubscribeTo%s%s%s": "Can't subscribe '%s' on '%s'. Reason: %s"
+  "cantSubscribeTo%s%s%s": "Can't subscribe '%s' on '%s'. Reason: %s",
+  "pipeline%s": "Pipeline '%s'",
+  "source%s": "source: %s",
+  "repeatedMsg": "repeated message",
+  "sourceType": "source type"
 }

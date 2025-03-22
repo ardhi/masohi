@@ -8,5 +8,9 @@
   "subsMustHave%s": "Sebuah langganan harus memiliki '%s'",
   "publisherStarted%s%s%d": "Publisher dari '%s@%s:%d' sukses dijalankan",
   "subscriberStarted%s%s%d": "Subscriber dari '%s@%s:%d' sukses dijalankan",
-  "cantSubscribeTo%s%s%s": "Tidak bisa berlangganan '%s' pada '%s'. Alasan: %s"
+  "cantSubscribeTo%s%s%s": "Tidak bisa berlangganan '%s' pada '%s'. Alasan: %s",
+  "pipeline%s": "Pipa '%s'",
+  "source%s": "sumber: %s",
+  "repeatedMsg": "pesan berulang",
+  "sourceType": "tipe sumber"
 }
