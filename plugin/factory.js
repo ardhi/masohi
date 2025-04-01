@@ -149,16 +149,15 @@ async function factory (pkgName) {
     }
 
     // send message
-    send = async (input, noQueue) => {
+    send = async (input) => {
       const { push } = this.app.bajoQueue
-      if (noQueue) {
-        await sendHandler.call(this, input)
-        return
-      }
-      // { worker: c.worker, payload, ns: this.name, nsConn: c.name }
-      // const msg = { worker: }
-      const pushed = await push('masohi:send', input)
+      const payload = { type: 'object', data: input }
+      const pushed = await push({ worker: 'masohi:workerSend', payload })
       if (!pushed) await sendHandler.call(this, input)
+    }
+
+    workerSend = async ({ payload, source } = {}) => {
+      await sendHandler.call(this, payload.data)
     }
 
     getConn = name => {
