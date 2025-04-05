@@ -15,7 +15,7 @@ async function factory (pkgName) {
         pipelines: [],
         localPubSub: {
           host: '127.0.0.1',
-          port: 7782
+          port: 17782
         }
       }
       this.types = ['pushPull', 'pubSub']
@@ -51,19 +51,21 @@ async function factory (pkgName) {
         return item
       }
 
-      this.config.connections.unshift({
-        name: 'default',
-        type: 'pubSub',
-        options: {
-          host: this.config.localPubSub.host,
-          port: this.config.localPubSub.port,
-          publisherAutoStart: true,
-          subscriberAutoStart: true,
-          publisherOpts: {
-            sendTimeout: 0
+      if (this.config.localPubSub) {
+        this.config.connections.unshift({
+          name: 'default',
+          type: 'pubSub',
+          options: {
+            host: this.config.localPubSub.host,
+            port: this.config.localPubSub.port,
+            publisherAutoStart: true,
+            subscriberAutoStart: true,
+            publisherOpts: {
+              sendTimeout: 0
+            }
           }
-        }
-      })
+        })
+      }
       this.zmq = await importPkg('bajoQueue:zeromq')
       this.connections = await buildCollections({
         ns: this.name,
@@ -92,11 +94,6 @@ async function factory (pkgName) {
         if (conn.instance) await conn.instance.init()
         this.log.debug('instanceCreatedOnConn%s%s', conn.name, this.print.write(conn.type))
       }
-
-      const conn = this.getConn('default')
-      if (!conn) return
-      conn.instance.subscriber.subscribe('')
-      this._catchAllHandler(conn)
       // get all pipeline capable connections
       const connPipes = []
       await eachPlugins(async ({ ns }) => {
@@ -124,14 +121,18 @@ async function factory (pkgName) {
         const mod = { ns: fullNs, path, src: this.name, level: 1000 }
         mod.handler = async function (params) {
           let newParams = {}
-          if (isPlainObject(params) && has(params, 'payload') && has(params, 'source') &&
-            has(params.payload, 'type') && has(params.payload, 'data')) newParams = params
-          else newParams.payload = { type: typeof params, data: params }
+          if (isPlainObject(params) && has(params, 'payload') && has(params, 'source')) newParams = params
+          else newParams = { payload: params }
           newParams.source = p.source
           await this.pushToPipeline(p.name, newParams)
         }
         this.app.bajo.hooks.push(mod)
       }
+      // pubsub
+      const conn = this.getConn('default')
+      if (!conn) return
+      conn.instance.subscriber.subscribe('')
+      this._catchAllHandler(conn)
     }
 
     _catchAllHandler = async (conn) => {
@@ -139,9 +140,9 @@ async function factory (pkgName) {
       const { camelCase } = this.lib._
       for await (const [topic, msg] of conn.instance.subscriber) {
         try {
-          const [alias, ...args] = topic.toString().split(':')
+          const [ns, ...args] = topic.toString().split(':')
           const data = JSON.parse(msg.toString())
-          await runHook(`${this.name}.${alias}:${camelCase(args.join(':'))}`, data)
+          await runHook(`${this.name}.subscriber.${ns}:${camelCase(args.join(':'))}`, data)
         } catch (err) {
           this.log.error('error%s', err.message)
         }
@@ -149,15 +150,20 @@ async function factory (pkgName) {
     }
 
     // send message
-    send = async (input) => {
+    send = async (params = {}) => {
+      const { noQueue = true } = params
+      if (noQueue) {
+        await sendHandler.call(this, params)
+        return
+      }
       const { push } = this.app.bajoQueue
-      const payload = { type: 'object', data: input }
-      const pushed = await push({ worker: 'masohi:workerSend', payload })
-      if (!pushed) await sendHandler.call(this, input)
+      params.worker = 'masohi:workerSend'
+      const pushed = await push(params)
+      if (!pushed) await sendHandler.call(this, params)
     }
 
-    workerSend = async ({ payload, source } = {}) => {
-      await sendHandler.call(this, payload.data)
+    workerSend = async (params) => {
+      await sendHandler.call(this, params)
     }
 
     getConn = name => {
@@ -170,41 +176,16 @@ async function factory (pkgName) {
       return conn
     }
 
-    transform = async ({ transformer, payload, plugin }) => {
-      const { isFunction, get } = this.lib._
-      const { outmatch } = this.lib
-      const { callHandler, isSet } = this.app.bajo
-      if (transformer.topic && isSet(payload.topic)) {
-        const match = outmatch(transformer.topic)
-        if (!match(payload.topic)) return true
-      }
-      const decoder = get(transformer, 'decoder')
-      if (!decoder) return false
-      try {
-        if (isFunction(decoder)) payload.data = await decoder(payload.data)
-        else {
-          const [hns, hmethod, ...args] = decoder.split(':')
-          args.push(payload.data)
-          const result = await callHandler(plugin, `${hns}:${hmethod}`, ...args)
-          payload.data = result
-          payload.type = 'object'
-        }
-        return true
-      } catch (err) {
-        return false
-      }
-    }
-
-    publish = async ({ hook, payload, source, conn = 'default' }) => {
-      if (!hook || !payload) return
+    publish = async (topicName, { payload, source, connection = 'default' }) => {
+      if (!topicName || !payload) return
       const { getPlugin, breakNsPath } = this.app.bajo
       const { ns } = breakNsPath(source)
-      const connection = this.getConn(conn)
-      if (!connection) throw this.error('notFound%s%s', this.print.write('Connection'), conn)
+      const conn = this.getConn(connection)
+      if (!conn) throw this.error('notFound%s%s', this.print.write('Connection'), connection)
       const plugin = getPlugin(ns, true)
       if (!plugin) throw this.error('pluginWithNameAliasNotLoaded%s', ns)
-      const params = { payload, source, conn }
-      await connection.instance.publisher.send([`${plugin.alias}:${hook}`, JSON.stringify(params)])
+      const params = { payload, source, connection }
+      await conn.instance.publisher.send([`${plugin.name}:${topicName}`, JSON.stringify(params)])
     }
 
     subscribe = async ({ topic, options = {} }) => {
@@ -214,75 +195,45 @@ async function factory (pkgName) {
       connection.instance.subscriber.subscribe(topic)
     }
 
-    preventRepeatedMsg = ({ payload, source } = {}) => {
-      const { isEqual } = this.lib._
-      this.sourceMsg[source] = this.sourceMsg[source] ?? {}
-      if (isEqual(this.sourceMsg[source].msg, payload.data)) throw this.error('repeatedMsg', { payload })
-      this.sourceMsg[source].msg = payload.data
+    lodashTransform = (method = '', params = {}) => {
+      for (const item of method.split('.')) {
+        const fn = this.lib._[item]
+        if (!fn) continue
+        params.payload = fn(params.payload)
+      }
     }
 
-    isExpiredMsg = (source, ttl) => {
-      const { has } = this.lib._
-      if (ttl <= 0) return false
-      const now = Date.now()
-      this.sourceMsg[source] = this.sourceMsg[source] ?? {}
-      if (!has(this.sourceMsg[source], 'ts')) this.sourceMsg[source].ts = now
-      if ((this.sourceMsg[source].ts + ttl) < now) {
-        this.sourceMsg[source].ts = now
-        return false
-      }
-      return true
+    preventRepeatedMsg = (params = {}) => {
+      const { isEqual } = this.lib._
+      const { payload, source } = params
+      if (isEqual(this.sourceMsg[source], payload)) throw this.error('repeatedMsg')
+      this.sourceMsg[source] = payload
     }
 
     pushToPipeline = async (name, options = {}) => {
-      const { find } = this.lib._
-      const { callHandler } = this.app.bajo
+      const { find, isString, camelCase } = this.lib._
+      const { callHandler, runHook } = this.app.bajo
       const { push } = this.app.bajoQueue
       const { source } = options
       const pipe = find(this.pipelines, { name })
       try {
         // handlers/transformers
         for (const item of pipe.handlers) {
+          if (isString(item.handler)) await runHook(`${this.name}.${camelCase(item.handler)}:beforePipe`, options)
           if (item.queue) {
             options.worker = item.handler
             await push(options)
           } else {
             await callHandler(item.handler, options)
+            if (isString(item.handler)) await runHook(`${this.name}.${camelCase(item.handler)}:afterPipe`, options)
           }
         }
       } catch (err) {
-        this.log.error('error%s%s%s', this.print.write('pipeline%s', pipe.name),
-          this.print.write('source%s', source), err.message)
+        if (this.app.bajo.config.log.level === 'trace') {
+          this.log.error('error%s%s%s', this.print.write('pipeline%s', pipe.name),
+            this.print.write('source%s', source), err.message)
+        }
       }
-    }
-
-    mergeStationData = async ({ payload, source }) => {
-      const { data } = payload
-      const { find, merge } = this.lib._
-      const { getMemdbStorage } = this.app.dobo
-      if (!getMemdbStorage) return
-      const { importPkg } = this.app.bajo
-      const { fixFloat } = this.app.masohiCodec
-      const geolib = await importPkg('bajoSpatial:geolib')
-      const [connection] = source.split(':')
-      const stations = getMemdbStorage('MasohiStation')
-      const station = find(stations, { connection })
-      if (!station) return
-      const item = {
-        stationId: station.id,
-        feed: station.feedType
-      }
-      if (station.lat && station.lng && data.lat && data.lng) {
-        item.stationDistance = fixFloat(geolib.getDistance(
-          { longitude: station.lng, latitude: station.lat },
-          { longitude: data.lng, latitude: data.lat }
-        ) / 1000, null, 2)
-        item.stationBearing = fixFloat(geolib.getRhumbLineBearing(
-          { longitude: station.lng, latitude: station.lat },
-          { longitude: data.lng, latitude: data.lat }
-        ), null, 2)
-      }
-      payload.data = merge({}, item, station.dataMerge ?? {}, data)
     }
   }
 }
