@@ -1,6 +1,6 @@
-import PushPull from '../lib/types/push-pull.js'
-import PubSub from '../lib/types/pub-sub.js'
-import sendHandler from '../lib/send-handler.js'
+import PushPull from './lib/types/push-pull.js'
+import PubSub from './lib/types/pub-sub.js'
+import sendHandler from './lib/send-handler.js'
 
 async function factory (pkgName) {
   const me = this

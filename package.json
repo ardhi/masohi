@@ -1,6 +1,6 @@
 {
   "name": "masohi",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "Messaging for Bajo Framework",
   "main": "index.js",
   "scripts": {
