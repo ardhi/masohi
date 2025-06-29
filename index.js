@@ -151,15 +151,14 @@ async function factory (pkgName) {
 
     // send message
     send = async (params = {}) => {
-      const { noQueue = true } = params
+      const { noQueue = false } = params
       if (noQueue) {
         await sendHandler.call(this, params)
         return
       }
       const { push } = this.app.bajoQueue
       params.worker = 'masohi:workerSend'
-      const pushed = await push(params)
-      if (!pushed) await sendHandler.call(this, params)
+      await push(params)
     }
 
     workerSend = async (params) => {
