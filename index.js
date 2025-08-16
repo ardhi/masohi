@@ -232,8 +232,8 @@ async function factory (pkgName) {
         if (this.app.bajo.config.log.level === 'trace') {
           this.log.error('error%s%s%s', this.print.write('pipeline%s', pipe.name),
             this.print.write('source%s', source), err.message)
-          if (this.config.dumpPipelineError) console.error(err)
         }
+        if (this.config.dumpPipelineError) console.error(err)
       }
     }
   }
