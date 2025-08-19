@@ -12,5 +12,12 @@
   "pipeline%s": "Pipeline '%s'",
   "source%s": "source: %s",
   "repeatedMsg": "repeated message",
-  "sourceType": "source type"
+  "sourceType": "source type",
+  "stream": "Data Stream - Current",
+  "streamHistory": "Data Stream - Historical",
+  "messaging": "Messaging",
+  "field": {
+    "payload": "Payload",
+    "source": "Source"
+  }
 }

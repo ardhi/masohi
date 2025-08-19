@@ -12,5 +12,12 @@
   "pipeline%s": "Pipa '%s'",
   "source%s": "sumber: %s",
   "repeatedMsg": "pesan berulang",
-  "sourceType": "tipe sumber"
+  "sourceType": "tipe sumber",
+  "stream": "Aliran Data - Saat Ini",
+  "streamHistory": "Aliran Data - Lintas Masa",
+  "messaging": "Messaging",
+  "field": {
+    "source": "Sumber",
+    "payload": "Muatan"
+  }
 }

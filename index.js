@@ -17,6 +17,21 @@ async function factory (pkgName) {
           host: '127.0.0.1',
           port: 17782
         },
+        waibu: {
+          prefix: 'messaging',
+          title: 'messaging'
+        },
+        waibuMpa: {
+          logo: 'wifi',
+          icon: 'wifi'
+        },
+        waibuAdmin: {
+          modelDisabled: 'all'
+        },
+        saveStream: {
+          ingest: true,
+          ingestHistory: false
+        },
         dumpPipelineError: false
       }
       this.types = ['pushPull', 'pubSub']
@@ -83,7 +98,7 @@ async function factory (pkgName) {
 
     start = async () => {
       const { eachPlugins, breakNsPath } = this.app.bajo
-      const { get, filter, map, isPlainObject, has } = this.lib._
+      const { get, filter, map, isPlainObject, has, merge } = this.lib._
       const { outmatchNs } = this.lib
 
       for (const conn of this.connections) {
@@ -106,6 +121,8 @@ async function factory (pkgName) {
       for (const ns of connPipes) {
         const mod = { ns, path: 'data', src: this.name, level: 1000 }
         mod.handler = async function (params) {
+          if (this.config.saveStream.ingest) await this.saveStream(merge({}, params, { type: 'INGEST' }))
+          if (this.config.saveStream.ingestHistory) await this.saveStreamHistory(merge({}, params, { type: 'INGEST' }))
           const pipes = filter(this.pipelines, p => {
             return p.sourceType === 'connection' && outmatchNs(params.source, p.source)
           })
@@ -148,6 +165,19 @@ async function factory (pkgName) {
           this.log.error('error%s', err.message)
         }
       }
+    }
+
+    saveStreamHistory = async (body) => {
+      if (!this.app.dobo) return
+      const { recordCreate } = this.app.dobo
+      await recordCreate('MasohiStreamHistory', body, { noResult: true, noValidation: true })
+    }
+
+    saveStream = async (body) => {
+      if (!this.app.dobo) return
+      const { recordUpsert } = this.app.dobo
+      const query = { source: body.source }
+      await recordUpsert('MasohiStream', body, { query, noResult: true, noValidation: true })
     }
 
     // send message

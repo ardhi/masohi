@@ -1,0 +1,10 @@
+{
+  "properties": [
+    "type::20:true:true",
+    "source::255:true:true",
+    "payload:text"
+  ],
+  "feature": {
+    "createdAt": true
+  }
+}
