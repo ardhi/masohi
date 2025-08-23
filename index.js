@@ -5,7 +5,7 @@ import sendHandler from './lib/send-handler.js'
 async function factory (pkgName) {
   const me = this
 
-  return class Masohi extends this.lib.BajoPlugin {
+  return class Masohi extends this.lib.Plugin {
     constructor () {
       super(pkgName, me.app)
       this.alias = 'masohi'
@@ -112,8 +112,10 @@ async function factory (pkgName) {
       }
       // get all pipeline capable connections
       const connPipes = []
-      await eachPlugins(async ({ ns }) => {
-        const conns = map(filter(get(this, `app.${ns}.connections`, []), c => {
+      const me = this
+      await eachPlugins(async function () {
+        const { name: ns } = this
+        const conns = map(filter(get(me, `app.${ns}.connections`, []), c => {
           return c.masohiPipeline
         }), c => `${ns}.${c.name}`)
         connPipes.push(...conns)
