@@ -5,11 +5,12 @@ import sendHandler from './lib/send-handler.js'
 async function factory (pkgName) {
   const me = this
 
-  return class Masohi extends this.lib.Plugin {
+  class Masohi extends this.lib.Plugin {
+    static alias = 'masohi'
+    static dependencies = ['bajo-queue']
+
     constructor () {
       super(pkgName, me.app)
-      this.alias = 'masohi'
-      this.dependencies = ['bajo-queue']
       this.config = {
         connections: [],
         pipelines: [],
@@ -269,6 +270,8 @@ async function factory (pkgName) {
       }
     }
   }
+
+  return Masohi
 }
 
 export default factory
