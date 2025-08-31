@@ -5,7 +5,7 @@ import sendHandler from './lib/send-handler.js'
 async function factory (pkgName) {
   const me = this
 
-  class Masohi extends this.lib.Plugin {
+  class Masohi extends this.app.pluginClass.base {
     static alias = 'masohi'
     static dependencies = ['bajo-queue']
 
@@ -43,7 +43,7 @@ async function factory (pkgName) {
       const { buildCollections, importPkg } = this.app.bajo
 
       const connSanitizer = async ({ item }) => {
-        const { pick, has } = this.lib._
+        const { pick, has } = this.app.lib._
         if (!this.types.includes(item.type)) throw this.error('invalidConnType%s', item.type)
         item.options = item.options ?? {}
         if (!has(item.options, 'host')) throw this.error('isRequired%s', 'options.host')
@@ -52,14 +52,14 @@ async function factory (pkgName) {
       }
 
       const pipeSanitizer = async ({ item }) => {
-        const { has, isString, map } = this.lib._
+        const { has, isString, map } = this.app.lib._
         const { breakNsPath } = this.app.bajo
         for (const key of ['source', 'handlers']) {
           if (!has(item, key)) throw this.error('isRequired%s', key)
         }
         breakNsPath(item.source)
         item.sourceType = item.sourceType ?? 'connection'
-        if (!['connection', 'hook'].includes(item.sourceType)) throw this.error('invalid%s%s', this.print.write('sourceType'), item.sourceType)
+        if (!['connection', 'hook'].includes(item.sourceType)) throw this.error('invalid%s%s', this.t('sourceType'), item.sourceType)
         if (isString(item.handlers)) item.handlers = [item.handlers]
         item.handlers = map(item.handlers, h => {
           if (isString(h)) h = { handler: h }
@@ -99,8 +99,8 @@ async function factory (pkgName) {
 
     start = async () => {
       const { eachPlugins, breakNsPath } = this.app.bajo
-      const { get, filter, map, isPlainObject, has, merge } = this.lib._
-      const { outmatchNs } = this.lib
+      const { get, filter, map, isPlainObject, has, merge } = this.app.lib._
+      const { outmatchNs } = this.app.lib
 
       for (const conn of this.connections) {
         conn.options = conn.options ?? {}
@@ -109,7 +109,7 @@ async function factory (pkgName) {
           case 'pubSub': conn.instance = new PubSub(this, conn); break
         }
         if (conn.instance) await conn.instance.init()
-        this.log.debug('instanceCreatedOnConn%s%s', conn.name, this.print.write(conn.type))
+        this.log.debug('instanceCreatedOnConn%s%s', conn.name, this.t(conn.type))
       }
       // get all pipeline capable connections
       const connPipes = []
@@ -158,7 +158,7 @@ async function factory (pkgName) {
 
     _catchAllHandler = async (conn) => {
       const { runHook } = this.app.bajo
-      const { camelCase } = this.lib._
+      const { camelCase } = this.app.lib._
       for await (const [topic, msg] of conn.instance.subscriber) {
         try {
           const [ns, ...args] = topic.toString().split(':')
@@ -200,10 +200,10 @@ async function factory (pkgName) {
     }
 
     getConn = name => {
-      const { find } = this.lib._
+      const { find } = this.app.lib._
       const conn = find(this.connections, { name })
       if (!conn) {
-        this.log.error('notFound%s%s', this.print.write('Connection'), name)
+        this.log.error('notFound%s%s', this.t('Connection'), name)
         return
       }
       return conn
@@ -214,7 +214,7 @@ async function factory (pkgName) {
       const { getPlugin, breakNsPath } = this.app.bajo
       const { ns } = breakNsPath(source)
       const conn = this.getConn(connection)
-      if (!conn) throw this.error('notFound%s%s', this.print.write('Connection'), connection)
+      if (!conn) throw this.error('notFound%s%s', this.t('Connection'), connection)
       const plugin = getPlugin(ns, true)
       if (!plugin) throw this.error('pluginWithNameAliasNotLoaded%s', ns)
       const params = { payload, source, connection }
@@ -230,21 +230,21 @@ async function factory (pkgName) {
 
     lodashTransform = (method = '', params = {}) => {
       for (const item of method.split('.')) {
-        const fn = this.lib._[item]
+        const fn = this.app.lib._[item]
         if (!fn) continue
         params.payload = fn(params.payload)
       }
     }
 
     preventRepeatedMsg = (params = {}) => {
-      const { isEqual } = this.lib._
+      const { isEqual } = this.app.lib._
       const { payload, source } = params
       if (isEqual(this.sourceMsg[source], payload)) throw this.error('repeatedMsg')
       this.sourceMsg[source] = payload
     }
 
     pushToPipeline = async (name, options = {}) => {
-      const { find, isString, camelCase } = this.lib._
+      const { find, isString, camelCase } = this.app.lib._
       const { callHandler, runHook } = this.app.bajo
       const { push } = this.app.bajoQueue
       const { source } = options
@@ -263,8 +263,8 @@ async function factory (pkgName) {
         }
       } catch (err) {
         if (this.app.bajo.config.log.level === 'trace') {
-          this.log.error('error%s%s%s', this.print.write('pipeline%s', pipe.name),
-            this.print.write('source%s', source), err.message)
+          this.log.error('error%s%s%s', this.t('pipeline%s', pipe.name),
+            this.t('source%s', source), err.message)
         }
         if (this.config.dumpPipelineError) console.error(err)
       }
