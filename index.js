@@ -85,13 +85,13 @@ async function factory (pkgName) {
       }
       this.zmq = await importPkg('bajoQueue:zeromq')
       this.connections = await buildCollections({
-        ns: this.name,
+        ns: this.ns,
         useDefaultName: false,
         handler: connSanitizer,
         container: 'connections'
       })
       this.pipelines = await buildCollections({
-        ns: this.name,
+        ns: this.ns,
         container: 'pipelines',
         handler: pipeSanitizer
       })
@@ -115,14 +115,14 @@ async function factory (pkgName) {
       const connPipes = []
       const me = this
       await eachPlugins(async function () {
-        const { name: ns } = this
+        const { ns } = this
         const conns = map(filter(get(me, `app.${ns}.connections`, []), c => {
           return c.masohiPipeline
         }), c => `${ns}.${c.name}`)
         connPipes.push(...conns)
       })
       for (const ns of connPipes) {
-        const mod = { ns, path: 'data', src: this.name, level: 1000 }
+        const mod = { ns, path: 'data', src: this.ns, level: 1000 }
         mod.handler = async function (params) {
           if (this.config.saveStream.ingest) await this.saveStream(merge({}, params, { type: 'INGEST' }))
           if (this.config.saveStream.ingestHistory) await this.saveStreamHistory(merge({}, params, { type: 'INGEST' }))
@@ -139,7 +139,7 @@ async function factory (pkgName) {
       for (const p of this.pipelines) {
         if (p.sourceType !== 'hook') continue
         const { fullNs, path } = breakNsPath(p.source)
-        const mod = { ns: fullNs, path, src: this.name, level: 1000 }
+        const mod = { ns: fullNs, path, src: this.ns, level: 1000 }
         mod.handler = async function (params) {
           let newParams = {}
           if (isPlainObject(params) && has(params, 'payload') && has(params, 'source')) newParams = params
@@ -163,7 +163,7 @@ async function factory (pkgName) {
         try {
           const [ns, ...args] = topic.toString().split(':')
           const data = JSON.parse(msg.toString())
-          await runHook(`${this.name}.subscriber.${ns}:${camelCase(args.join(':'))}`, data)
+          await runHook(`${this.ns}.subscriber.${ns}:${camelCase(args.join(':'))}`, data)
         } catch (err) {
           this.log.error('error%s', err.message)
         }
@@ -218,7 +218,7 @@ async function factory (pkgName) {
       const plugin = getPlugin(ns, true)
       if (!plugin) throw this.error('pluginWithNameAliasNotLoaded%s', ns)
       const params = { payload, source, connection }
-      await conn.instance.publisher.send([`${plugin.name}:${topicName}`, JSON.stringify(params)])
+      await conn.instance.publisher.send([`${plugin.ns}:${topicName}`, JSON.stringify(params)])
     }
 
     subscribe = async ({ topic, options = {} }) => {
@@ -252,13 +252,13 @@ async function factory (pkgName) {
       try {
         // handlers/transformers
         for (const item of pipe.handlers) {
-          if (isString(item.handler)) await runHook(`${this.name}.${camelCase(item.handler)}:beforePipe`, options)
+          if (isString(item.handler)) await runHook(`${this.ns}.${camelCase(item.handler)}:beforePipe`, options)
           if (item.queue) {
             options.worker = item.handler
             await push(options)
           } else {
             await callHandler(item.handler, options)
-            if (isString(item.handler)) await runHook(`${this.name}.${camelCase(item.handler)}:afterPipe`, options)
+            if (isString(item.handler)) await runHook(`${this.ns}.${camelCase(item.handler)}:afterPipe`, options)
           }
         }
       } catch (err) {
