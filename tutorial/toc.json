@@ -1,0 +1,20 @@
+{
+  "00-welcome": {
+    "title": "Welcome"
+  },
+  "01-getting-started": {
+    "title": "Getting Started"
+  },
+  "02-user-guide": {
+    "title": "User Guide"
+  },
+  "03-dev-guide": {
+    "title": "Developer Guide"
+  },
+  "04-config": {
+    "title": "Config Object"
+  },
+  "05-donations": {
+    "title": "Donations"
+  }
+}

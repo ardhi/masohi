@@ -1,0 +1,44 @@
+{
+  "plugins": ["plugins/markdown", "jsdoc-plugin-intersection"],
+  "opts": {
+    "encoding": "utf8",
+    "recurse": true,
+    "verbose": true,
+    "destination": "./docs",
+    "template": "node_modules/clean-jsdoc-theme",
+    "tutorials": "./tutorial",
+    "readme": "./docs-static/home.md",
+    "theme_opts": {
+      "static_dir": ["./docs-static"],
+      "default_theme": "light",
+      "display-module-header": true,
+      "title": "Masohi Messaging",
+      "homepageTitle": "Masohi Messaging",
+      "sections": ["Tutorials", "Classes", "Events", "Modules", "Global"],
+      "menu": [{
+        "title": "Dobo",
+        "link": "https://bajo.app/masohi"
+      }, {
+        "title": "NPM",
+        "link": "https://www.npmjs.com/package/masohi"
+      }, {
+        "title": "Github",
+        "link": "https://github.com/ardhi/masohi"
+      }]
+    }
+  },
+  "source": {
+    "include": ["."],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "exclude": ["node_modules", "docs", "test"]
+  },
+  "markdown": {
+    "hardwrap": false,
+    "idInHeadings": true
+  },
+  "sourceType": "module",
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false
+  }
+}
