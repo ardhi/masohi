@@ -16,7 +16,7 @@
       "homepageTitle": "Masohi Messaging",
       "sections": ["Tutorials", "Classes", "Events", "Modules", "Global"],
       "menu": [{
-        "title": "Dobo",
+        "title": "Masohi",
         "link": "https://bajo.app/masohi"
       }, {
         "title": "NPM",
@@ -24,6 +24,9 @@
       }, {
         "title": "Github",
         "link": "https://github.com/ardhi/masohi"
+      }, {
+        "title": "Bajo",
+        "link": "https://bajo.app"
       }]
     }
   },

@@ -8,7 +8,7 @@ Messaging for [Bajo](https://github.com/ardhi/bajo)
 
 ## Installation
 
-Goto your ```{project-dir}``` and type:
+Goto your ```{app-dir}``` and type:
 
 ```bash
 $ npm install masohi bajo-queue

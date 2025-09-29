@@ -2,9 +2,20 @@ import PushPull from './lib/types/push-pull.js'
 import PubSub from './lib/types/pub-sub.js'
 import sendHandler from './lib/send-handler.js'
 
+/**
+ * Plugin factory
+ *
+ * @param {string} pkgName - NPM package name
+ * @returns {class}
+ */
 async function factory (pkgName) {
   const me = this
 
+  /**
+   * Masohi class
+   *
+   * @class
+   */
   class Masohi extends this.app.pluginClass.base {
     static alias = 'masohi'
     static dependencies = ['bajo-queue']

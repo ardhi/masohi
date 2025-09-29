@@ -14,7 +14,10 @@
   "04-config": {
     "title": "Config Object"
   },
-  "05-donations": {
+  "05-ecosystem": {
+    "title": "Ecosystem"
+  },
+  "06-donations": {
     "title": "Donations"
   }
 }
