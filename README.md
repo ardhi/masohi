@@ -6,7 +6,7 @@
 
 <img src="docs/static/logo.png" width="300" alt="masohi">
 
-Messaging for [Bajo](https://github.com/ardhi/bajo)
+Messaging for [Bajo Framework](https://github.com/ardhi/bajo)
 
 ## Installation
 
