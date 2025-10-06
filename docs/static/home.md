@@ -1,8 +1,8 @@
-<p><img alt="Dobo DBMS" src="static/logo-ecosystem.png" width="200" /></p>
+<p><img alt="Masohi Messaging" src="static/logo-ecosystem.png" width="200" /></p>
 
 ## Hire Me
 
-If you have a Bajo Framework-based application project, please contact me via email. I'd be happy to work on it at a competitive price and with fast turnaround!
+If you have a Bajo Framework-based application project, please contact me via <a href="mailto:ardhi.lukianto@gmail.com">email</a>. I'd be happy to work on it at a competitive price and with fast turnaround!
 
 ## Support Me
 
@@ -16,5 +16,5 @@ Please support me using the channels below. Your donation will motivate me to wo
 </a>
 
 <p>
-<div><img alt="bc1qwtv78cwp9ef8hnqaw84fxg5856l0pggqe32g6f" src="bitcoin.jpeg" width="150" height="150" /><br>Bitcoin</div>
+<div><img alt="bc1qwtv78cwp9ef8hnqaw84fxg5856l0pggqe32g6f" src="static/bitcoin.jpeg" width="150" height="150" /><br>Bitcoin</div>
 </p>
