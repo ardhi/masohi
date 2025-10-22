@@ -6,17 +6,16 @@
     "verbose": true,
     "destination": "./docs",
     "template": "node_modules/clean-jsdoc-theme",
-    "tutorials": "./tutorial",
-    "readme": "../shared/static/home-main.md",
+    "readme": "./docs/static/home.md",
     "theme_opts": {
       "default_theme": "light",
       "display-module-header": true,
-      "title": "Masohi Messaging",
-      "homepageTitle": "Masohi Messaging",
-      "sections": ["Tutorials", "Classes", "Events", "Modules", "Global"],
+      "title": "Masohi API",
+      "homepageTitle": "Masohi API",
+      "sections": ["Classes", "Events", "Modules", "Global"],
       "menu": [{
-        "title": "Masohi",
-        "link": "https://bajo.app/masohi"
+        "title": "Homepage",
+        "link": "https://masohi.bajo.app/"
       }, {
         "title": "NPM",
         "link": "https://www.npmjs.com/package/masohi"
@@ -25,7 +24,7 @@
         "link": "https://github.com/ardhi/masohi"
       }, {
         "title": "Bajo",
-        "link": "https://bajo.app"
+        "link": "https://bajo.app/"
       }]
     }
   },
@@ -41,13 +40,6 @@
   "sourceType": "module",
   "templates": {
     "cleverLinks": false,
-    "monospaceLinks": false,
-    "default": {
-      "staticFiles": {
-        "include": [
-          "../shared"
-        ]
-      }
-    }
+    "monospaceLinks": false
   }
 }

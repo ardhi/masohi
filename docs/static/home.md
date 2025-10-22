@@ -1,5 +1,6 @@
-<p><img alt="Masohi Messaging" src="static/logo-ecosystem.png" width="200" /></p>
-- [Contributing](CONTRIBUTING.md)
+![Masohi](static/logo.png)
+
+### Masohi Messaging for [Bajo](https://github.com/ardhi/bajo)
 
 ## Hire Me
 

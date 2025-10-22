@@ -2,11 +2,11 @@
 
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/ardhi/masohi) ![NPM Version](https://img.shields.io/npm/v/masohi)
 
-> <br />**Attention**: I do NOT accept any pull request at the moment, thanks! ([Why?](tutorial/00-welcome.md#contribution))<br /><br />
+> <br />**Attention**: I do NOT accept any pull request at the moment, thanks! ([Why?](wiki/CONTRIBUTING.md))<br /><br />
 
 <img src="docs/static/logo.png" width="300" alt="masohi">
 
-Messaging for [Bajo Framework](https://github.com/ardhi/bajo)
+### Messaging for [Bajo](https://github.com/ardhi/bajo)
 
 ## Installation
 
@@ -20,12 +20,14 @@ Now open your ```{data-dir}/config/.plugins``` and add ```masohi``` and ```bajo-
 
 ## Documentations
 
-- [Getting Started](tutorial/01-getting-started.md)
-- [User Guide](tutorial/02-user-guide.md)
-- [Developer Guide](tutorial/03-dev-guide.md)
-- [Config Object](tutorial/04-config.md)
+- [Homepage](https://masohi.bajo.app/)
+- [Getting Started](wiki/GETTING-STARTED.md)
+- [User Guide](wiki/USER-GUIDE.md)
+- [Developer Guide](wiki/DEV-GUIDE.md)
+- [Config Object](wiki/CONFIG.md)
+- [Ecosystem](wiki/ECOSYSTEM.md)
 - [API](https://ardhi.github.io/masohi)
-- [Contributing](CONTRIBUTING.md)
+- [Contributing](wiki/CONTRIBUTING.md)
 
 ## Hire Me
 
