@@ -1,0 +1,8 @@
+{
+  "properties": [
+    "type,,20,true,true",
+    "source,,255,true,true",
+    "payload,text"
+  ],
+  "features": ["dobo:updatesAt"]
+}

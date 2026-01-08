@@ -1,5 +1,0 @@
-{
-  "common": {
-    "disabled": ["create", "update"]
-  }
-}

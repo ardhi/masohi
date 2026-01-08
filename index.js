@@ -16,7 +16,7 @@ async function factory (pkgName) {
    *
    * @class
    */
-  class Masohi extends this.app.pluginClass.base {
+  class Masohi extends this.app.baseClass.Base {
     static alias = 'masohi'
     static dependencies = ['bajo-queue']
 
@@ -183,15 +183,15 @@ async function factory (pkgName) {
 
     saveStreamHistory = async (body) => {
       if (!this.app.dobo) return
-      const { recordCreate } = this.app.dobo
-      await recordCreate('MasohiStreamHistory', body, { noResult: true, noValidation: true })
+      const model = this.app.dobo.getModel('MasohiStreamHistory')
+      await model.createRecord(body, { noResult: true, noValidation: true })
     }
 
     saveStream = async (body) => {
       if (!this.app.dobo) return
-      const { recordUpsert } = this.app.dobo
       const query = { source: body.source }
-      await recordUpsert('MasohiStream', body, { query, noResult: true, noValidation: true })
+      const model = this.app.dobo.getModel('MasohiStream')
+      await model.upsertRecord(body, { query }, { noResult: true, noValidation: true })
     }
 
     // send message
