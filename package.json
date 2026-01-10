@@ -9,7 +9,11 @@
   },
   "type": "module",
   "bajo": {
-    "type": "plugin"
+    "type": "plugin",
+    "alias": "m",
+    "dependencies": [
+      "bajo-queue"
+    ]
   },
   "repository": {
     "type": "git",
