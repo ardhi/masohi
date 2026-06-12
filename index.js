@@ -219,11 +219,11 @@ async function factory (pkgName) {
 
     publish = async (topicName, { payload, source, connection = 'default' }) => {
       if (!topicName || !payload) return
-      const { getPlugin, breakNsPath } = this.app.bajo
+      const { breakNsPath } = this.app.bajo
       const { ns } = breakNsPath(source)
       const conn = this.getConn(connection)
       if (!conn) throw this.error('notFound%s%s', this.t('Connection'), connection)
-      const plugin = getPlugin(ns, true)
+      const plugin = this.app.getPlugin(ns, true)
       if (!plugin) throw this.error('pluginWithNameAliasNotLoaded%s', ns)
       const params = { payload, source, connection }
       await conn.instance.publisher.send([`${plugin.ns}:${topicName}`, JSON.stringify(params)])
@@ -275,6 +275,13 @@ async function factory (pkgName) {
             this.t('source%s', source), err.message)
         }
         if (this.config.dumpPipelineError) console.error(err)
+      }
+    }
+
+    dispose = async () => {
+      await super.dispose()
+      for (const conn of this.connections) {
+        await conn.dispose()
       }
     }
   }
